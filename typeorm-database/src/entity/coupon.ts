@@ -1,12 +1,15 @@
 import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
+import "reflect-metadata"
 
 @Entity({ name: "coupons" })
-export class coupon {
+export class Coupon {
 
-    @Column()
-    assigned_at: string;
+    @Column({ name: "assigned_at" })
+    assignedAt: Date;
 
-    @Column()
+    @Column({
+        width : 8
+    })
     code: number;
 
     @Column()
@@ -15,7 +18,7 @@ export class coupon {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
-    expires_at: string;
+    @Column({ name: "expires_at" })
+    expiresAt: Date;
 
 }
