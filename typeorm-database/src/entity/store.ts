@@ -4,7 +4,7 @@ import "reflect-metadata"
 @Entity({ name: "stores" })
 export class Store {
 
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn("uuid")
     id: number;
 
     @Column()

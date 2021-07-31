@@ -15,7 +15,7 @@ export class Coupon {
     @Column()
     customer_email: string;
 
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn("uuid")
     id: number;
 
     @Column({ name: "expires_at" })

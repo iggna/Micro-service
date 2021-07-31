@@ -16,7 +16,7 @@ var Store = /** @class */ (function () {
     function Store() {
     }
     __decorate([
-        typeorm_1.PrimaryGeneratedColumn(),
+        typeorm_1.PrimaryGeneratedColumn("uuid"),
         __metadata("design:type", Number)
     ], Store.prototype, "id");
     __decorate([

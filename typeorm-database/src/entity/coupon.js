@@ -30,7 +30,7 @@ var Coupon = /** @class */ (function () {
         __metadata("design:type", String)
     ], Coupon.prototype, "customer_email");
     __decorate([
-        typeorm_1.PrimaryGeneratedColumn(),
+        typeorm_1.PrimaryGeneratedColumn("uuid"),
         __metadata("design:type", Number)
     ], Coupon.prototype, "id");
     __decorate([

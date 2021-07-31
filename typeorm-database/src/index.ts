@@ -1,7 +1,14 @@
 import "reflect-metadata";
+import express from "express";
+import { application } from "express";
+import "reflect-metadata";
 import {createConnection} from "typeorm";
 import {Coupon} from "./entity/coupon";
 import {Store} from "./entity/store";
+
+const app = express()
+
+require('dotenv').config()
 
 createConnection({
     type: "postgres",
@@ -17,5 +24,13 @@ createConnection({
     synchronize: true,
     logging: false
 }).then(connection => {
-    console.log('Holix')
+
+    //Coupons
+    app.get('/coupons', function (req, res) {
+        console.log('accedio a coupons')
+    })
+
+    app.listen(3000)
+
 }).catch(error => console.log(error));
+
