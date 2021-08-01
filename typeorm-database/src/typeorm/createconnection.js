@@ -39,38 +39,26 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-require("reflect-metadata");
-var express_1 = __importDefault(require("express"));
-require("reflect-metadata");
-var createconnection_1 = require("./typeorm/createconnection");
-var coupon_1 = require("./entity/coupon");
+exports.dbCreateConnection = void 0;
 var typeorm_1 = require("typeorm");
-var app = express_1["default"]();
-app.get('/coupons', function (req, res) {
-    return __awaiter(this, void 0, void 0, function () {
-        var repository, data;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    repository = typeorm_1.getRepository(coupon_1.Coupon);
-                    return [4 /*yield*/, repository.find()];
-                case 1:
-                    data = _a.sent();
-                    console.log(data);
-                    res.send(data);
-                    return [2 /*return*/];
-            }
-        });
-    });
-});
-app.listen(3000);
-(function () { return __awaiter(void 0, void 0, void 0, function () {
+var ormconfig_1 = __importDefault(require("../config/ormconfig"));
+var dbCreateConnection = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, createconnection_1.dbCreateConnection()];
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, typeorm_1.createConnection(ormconfig_1["default"])];
             case 1:
                 _a.sent();
-                return [2 /*return*/];
+                console.log('Database connection success.');
+                return [3 /*break*/, 3];
+            case 2:
+                error_1 = _a.sent();
+                console.log(error_1);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/, null];
         }
     });
-}); })();
+}); };
+exports.dbCreateConnection = dbCreateConnection;

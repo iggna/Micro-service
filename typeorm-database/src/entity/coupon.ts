@@ -1,24 +1,32 @@
 import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
-import "reflect-metadata"
 
 @Entity({ name: "coupons" })
 export class Coupon {
 
-    @Column({ name: "assigned_at" })
+    @Column({ 
+        name: "assigned_at", 
+        nullable: true 
+    })
+
     assignedAt: Date;
 
     @Column({
-        width : 8
+        width : 8,
+        nullable: true
     })
     code: number;
 
-    @Column()
+    @Column({
+        nullable: true
+    })
     customer_email: string;
 
-    @PrimaryGeneratedColumn("uuid")
+    @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ name: "expires_at" })
+    @Column({ 
+        name: "expires_at",
+        nullable: true
+    })
     expiresAt: Date;
-
 }

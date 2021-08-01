@@ -1,36 +1,22 @@
 import "reflect-metadata";
 import express from "express";
-import { application } from "express";
 import "reflect-metadata";
-import {createConnection} from "typeorm";
-import {Coupon} from "./entity/coupon";
-import {Store} from "./entity/store";
+import { dbCreateConnection } from "./typeorm/createconnection";
+import { Coupon } from "./entity/coupon";
+import { getRepository } from "typeorm";
 
 const app = express()
 
-require('dotenv').config()
+app.get('/coupons', async function (req, res) {
+    const repository = getRepository(Coupon);
+    const data = await repository.find();
+    console.log(data)
+    res.send(data)
+})
 
-createConnection({
-    type: "postgres",
-    host: "localhost",
-    port: 5432,
-    username: "postgres",
-    password: "helterskelter",
-    database: "rooftop-backend-challenge",
-    entities: [
-        Coupon,
-        Store
-    ],
-    synchronize: true,
-    logging: false
-}).then(connection => {
+app.listen(3000);
 
-    //Coupons
-    app.get('/coupons', function (req, res) {
-        console.log('accedio a coupons')
-    })
-
-    app.listen(3000)
-
-}).catch(error => console.log(error));
+(async () => {   
+    await dbCreateConnection(); 
+})();
 

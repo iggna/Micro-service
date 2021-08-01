@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "tsc typeorm-database/src/index.ts --experimentalDecorators --emitDecoratorMetadata",
+    "start": "tsc typeorm-database/src/index.ts --experimentalDecorators --emitDecoratorMetadata --esModuleInterop",
     "dev": "nodemon src/app.ts",
     "build": "tsc -p ."
   },
