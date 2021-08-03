@@ -26,7 +26,7 @@ var Coupon = /** @class */ (function () {
             width: 8,
             nullable: true
         }),
-        __metadata("design:type", Number)
+        __metadata("design:type", String)
     ], Coupon.prototype, "code");
     __decorate([
         typeorm_1.Column({

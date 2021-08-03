@@ -14,7 +14,7 @@ export class Coupon {
         width : 8,
         nullable: true
     })
-    code: number;
+    code: string;
 
     @Column({
         nullable: true
