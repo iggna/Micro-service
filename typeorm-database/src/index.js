@@ -49,33 +49,46 @@ var typeorm_1 = require("typeorm");
 var app = express_1["default"]();
 app.get('/coupons', function (req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var repository, data;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
+        var repository, _a, customer_email, code;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
                 case 0:
                     repository = typeorm_1.getRepository(coupon_1.Coupon);
-                    return [4 /*yield*/, repository.find()];
-                case 1:
-                    data = _a.sent();
-                    console.log(data);
-                    res.send(data);
-                    return [2 /*return*/];
+                    _a = req.query, customer_email = _a.customer_email, code = _a.code;
+                    if (!(typeof customer_email !== "string" || typeof code !== "string")) return [3 /*break*/, 1];
+                    res.status(422).end();
+                    return [3 /*break*/, 3];
+                case 1: return [4 /*yield*/, repository.findOne({ customer_email: customer_email, code: code })];
+                case 2:
+                    if (_b.sent()) {
+                        res.status(200).send(200);
+                    }
+                    ;
+                    res.status(404).send(404);
+                    _b.label = 3;
+                case 3: return [2 /*return*/];
             }
         });
     });
 });
 app.get('/stores', function (req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var repository, data;
+        var repository;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     repository = typeorm_1.getRepository(store_1.Store);
-                    return [4 /*yield*/, repository.find()];
+                    return [4 /*yield*/, repository.find().then(function (data) {
+                            res.status(200).json({
+                                data: data
+                            });
+                        })["catch"](function (err) {
+                            res.status(400).json({
+                                message: err
+                            });
+                        })];
                 case 1:
-                    data = _a.sent();
-                    console.log(data);
-                    res.send(data);
+                    _a.sent();
                     return [2 /*return*/];
             }
         });
