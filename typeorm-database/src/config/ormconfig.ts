@@ -9,8 +9,8 @@ const config : ConnectionOptions = {
     password: process.env.TYPEORM_PASSWORD,
     database: process.env.TYPEORM_DATABASE,
     entities: ['**/src/entity/*.js'],
-    // schema: "rooftop-backend-challenge",
-    synchronize: Boolean(process.env.TYPEORM_SYNCHRONIZE),
+    schema: "rooftop-backend-challenge",
+    synchronize: Boolean(false), //variable de entorno sacada, preguntar a pablo a ver q onda como utilizar variable entorno
     logging: Boolean(process.env.TYPEORM_LOGGING),
 };
 

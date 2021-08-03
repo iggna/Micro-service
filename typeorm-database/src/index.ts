@@ -3,6 +3,7 @@ import express from "express";
 import "reflect-metadata";
 import { dbCreateConnection } from "./typeorm/createconnection";
 import { Coupon } from "./entity/coupon";
+import { Store } from "./entity/store";
 import { getRepository } from "typeorm";
 
 const app = express()
@@ -10,8 +11,15 @@ const app = express()
 app.get('/coupons', async function (req, res) {
     const repository = getRepository(Coupon);
     const data = await repository.find();
-    console.log(data)
-    res.send(data)
+    console.log(data);
+    res.send(data);
+})
+
+app.get('/stores', async function (req, res) {
+    const repository = getRepository(Store);
+    const data = await repository.find();
+    console.log(data);
+    res.send(data);
 })
 
 app.listen(3000);

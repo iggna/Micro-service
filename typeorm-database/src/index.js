@@ -44,6 +44,7 @@ var express_1 = __importDefault(require("express"));
 require("reflect-metadata");
 var createconnection_1 = require("./typeorm/createconnection");
 var coupon_1 = require("./entity/coupon");
+var store_1 = require("./entity/store");
 var typeorm_1 = require("typeorm");
 var app = express_1["default"]();
 app.get('/coupons', function (req, res) {
@@ -53,6 +54,23 @@ app.get('/coupons', function (req, res) {
             switch (_a.label) {
                 case 0:
                     repository = typeorm_1.getRepository(coupon_1.Coupon);
+                    return [4 /*yield*/, repository.find()];
+                case 1:
+                    data = _a.sent();
+                    console.log(data);
+                    res.send(data);
+                    return [2 /*return*/];
+            }
+        });
+    });
+});
+app.get('/stores', function (req, res) {
+    return __awaiter(this, void 0, void 0, function () {
+        var repository, data;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    repository = typeorm_1.getRepository(store_1.Store);
                     return [4 /*yield*/, repository.find()];
                 case 1:
                     data = _a.sent();

@@ -13,6 +13,6 @@
       "pg": "^8.4.0"
    },
    "scripts": {
-      "start": "tsc typeorm-database/src/index.ts --experimentalDecorators --emitDecoratorMetadata"
+      "start": "tsc typeorm-database/src/index.ts --experimentalDecorators --emitDecoratorMetadata --esModuleInterop"
    }
 }

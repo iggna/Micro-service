@@ -8,7 +8,7 @@ var config = {
     password: process.env.TYPEORM_PASSWORD,
     database: process.env.TYPEORM_DATABASE,
     entities: ['**/src/entity/*.js'],
-    // schema: "rooftop-backend-challenge",
+    schema: "rooftop-backend-challenge",
     synchronize: Boolean(process.env.TYPEORM_SYNCHRONIZE),
     logging: Boolean(process.env.TYPEORM_LOGGING)
 };
