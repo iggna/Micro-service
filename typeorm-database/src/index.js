@@ -43,10 +43,13 @@ require("reflect-metadata");
 var express_1 = __importDefault(require("express"));
 require("reflect-metadata");
 var createconnection_1 = require("./typeorm/createconnection");
+var validation_schema_1 = __importDefault(require("./Joi/validation_schema"));
+var randomDate_1 = __importDefault(require("./Rdate/randomDate"));
 var coupon_1 = require("./entity/coupon");
 var store_1 = require("./entity/store");
 var typeorm_1 = require("typeorm");
 var app = express_1["default"]();
+//GET
 app.get('/coupons', function (req, res) {
     return __awaiter(this, void 0, void 0, function () {
         var repository, _a, customer_email, code;
@@ -71,6 +74,56 @@ app.get('/coupons', function (req, res) {
         });
     });
 });
+//POST
+app.post('/coupons', function (req, res) {
+    return __awaiter(this, void 0, void 0, function () {
+        var repository, newCoupon, code, validation;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    repository = typeorm_1.getRepository(coupon_1.Coupon);
+                    newCoupon = new coupon_1.Coupon;
+                    code = req.query.code;
+                    return [4 /*yield*/, validation_schema_1["default"].validateAsync({ code: code })]; //preguntar como meter en el if
+                case 1:
+                    validation = _a.sent() //preguntar como meter en el if
+                    ;
+                    if (validation) {
+                        newCoupon.code = code;
+                        newCoupon.expiresAt = (randomDate_1["default"]);
+                        repository.save(newCoupon);
+                        res.status(201).send(201);
+                    }
+                    else {
+                        res.status(422).send(422);
+                    }
+                    return [2 /*return*/];
+            }
+        });
+    });
+});
+app.patch('/coupons', function (req, res) {
+    return __awaiter(this, void 0, void 0, function () {
+        var repository;
+        return __generator(this, function (_a) {
+            repository = typeorm_1.getRepository(coupon_1.Coupon);
+            return [2 /*return*/];
+        });
+    });
+});
+//DELETE
+// app.delete('/coupons', async function (req,res) {
+//     const repository = getRepository(Coupon);
+//     const { code } = req.query;
+//     if (typeof code !== "string") {
+//         res.status(422).end()
+//     } else {
+//         const result = await repository.findOne({code})
+//        if (result !== ) {
+//            repository.remove(Coupon)
+//        } 
+//     }
+// })
 app.get('/stores', function (req, res) {
     return __awaiter(this, void 0, void 0, function () {
         var repository;
