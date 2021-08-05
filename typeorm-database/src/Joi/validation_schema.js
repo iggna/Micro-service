@@ -6,8 +6,8 @@ exports.__esModule = true;
 exports.authEmail = exports.authSchema = void 0;
 var joi_1 = __importDefault(require("joi"));
 exports.authSchema = joi_1["default"].object({
-    code: joi_1["default"].string().alphanum().min(8).max(8)
+    code: joi_1["default"].string().alphanum().equal(8)
 });
 exports.authEmail = joi_1["default"].object({
-    email: joi_1["default"].string().email().required()
+    customer_email: joi_1["default"].string().email().required()
 });

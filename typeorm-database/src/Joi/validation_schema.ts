@@ -1,10 +1,10 @@
 import Joi from "joi";
 
 export const authSchema = Joi.object({
-    code: Joi.string().alphanum().min(8).max(8)
+    code: Joi.string().alphanum().equal(8)
 })
 
 export const authEmail = Joi.object({
-    email: Joi.string().email().required()
+    customer_email: Joi.string().email().required()
 })
 
