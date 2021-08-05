@@ -7,6 +7,6 @@ var date_1 = __importDefault(require("@js-random/date"));
 var date = date_1["default"]();
 var Rdate = date_1["default"]({
     from: new Date(2021, 8, 8),
-    to: new Date(2025, 8, 8)
+    to: new Date(2022, 8, 8)
 });
 exports["default"] = Rdate;
