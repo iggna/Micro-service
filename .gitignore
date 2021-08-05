@@ -1,2 +1,8 @@
 node_modules
 rooftop-backend-challenge-postgre.sql
+.idea/
+.vscode/
+node_modules/
+build/
+tmp/
+temp/
