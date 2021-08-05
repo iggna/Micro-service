@@ -41,139 +41,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 require("reflect-metadata");
 var express_1 = __importDefault(require("express"));
-require("reflect-metadata");
-var createconnection_1 = require("./typeorm/createconnection");
-var validation_schema_1 = require("./Joi/validation_schema");
-var randomDate_1 = __importDefault(require("./Rdate/randomDate"));
-var coupon_1 = require("./entity/coupon");
-var store_1 = require("./entity/store");
-var typeorm_1 = require("typeorm");
+var createConnection_1 = require("./typeorm/createConnection");
+var coupon_controller_1 = require("./controllers/coupon.controller");
 var app = express_1["default"]();
+app.use(express_1["default"].json());
 //GET
-app.get('/coupons', function (req, res) {
-    return __awaiter(this, void 0, void 0, function () {
-        var repository, _a, customer_email, code;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
-                case 0:
-                    repository = typeorm_1.getRepository(coupon_1.Coupon);
-                    _a = req.query, customer_email = _a.customer_email, code = _a.code;
-                    if (!(typeof customer_email !== "string" || typeof code !== "string")) return [3 /*break*/, 1];
-                    res.status(422).end();
-                    return [3 /*break*/, 3];
-                case 1: return [4 /*yield*/, repository.findOne({ customer_email: customer_email, code: code })];
-                case 2:
-                    if (_b.sent()) {
-                        res.status(200).send(200);
-                    }
-                    ;
-                    res.status(404).send(404);
-                    _b.label = 3;
-                case 3: return [2 /*return*/];
-            }
-        });
-    });
-});
+app.get('/coupons', coupon_controller_1.getCoupons);
 //POST
-app.post('/coupons', function (req, res) {
-    return __awaiter(this, void 0, void 0, function () {
-        var repository, newCoupon, code, validation;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    repository = typeorm_1.getRepository(coupon_1.Coupon);
-                    newCoupon = new coupon_1.Coupon;
-                    code = req.query.code;
-                    return [4 /*yield*/, validation_schema_1.authSchema.validateAsync({ code: code })]; //preguntar como meter en el if
-                case 1:
-                    validation = _a.sent() //preguntar como meter en el if
-                    ;
-                    if (validation) {
-                        newCoupon.code = code;
-                        newCoupon.expiresAt = (randomDate_1["default"]);
-                        repository.save(newCoupon);
-                        res.status(201).send(201);
-                    }
-                    else {
-                        res.status(422).send(422);
-                    }
-                    return [2 /*return*/];
-            }
-        });
-    });
-});
-app.patch('/coupons', function (req, res) {
-    return __awaiter(this, void 0, void 0, function () {
-        var repository, newEmail, customer_email, emailValidate;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    repository = typeorm_1.getRepository(coupon_1.Coupon);
-                    newEmail = new coupon_1.Coupon;
-                    customer_email = req.query.customer_email;
-                    return [4 /*yield*/, validation_schema_1.authEmail.validateAsync({ customer_email: customer_email })];
-                case 1:
-                    emailValidate = _a.sent();
-                    if (!emailValidate) return [3 /*break*/, 4];
-                    if (!(typeof customer_email == "string")) return [3 /*break*/, 3];
-                    return [4 /*yield*/, repository.findOne({ customer_email: customer_email })];
-                case 2:
-                    if (_a.sent()) {
-                        res.status(422).send(422);
-                    }
-                    else {
-                    }
-                    _a.label = 3;
-                case 3: return [3 /*break*/, 5];
-                case 4:
-                    res.send({ message: 'error no valido' });
-                    _a.label = 5;
-                case 5: return [2 /*return*/];
-            }
-        });
-    });
-}, 
+app.post('/coupons', coupon_controller_1.postCoupons);
+//PATCH
+app.patch('/coupons', coupon_controller_1.patchCoupons);
 //DELETE
-// app.delete('/coupons', async function (req,res) {
-//     const repository = getRepository(Coupon);
-//     const { code } = req.query;
-//     if (typeof code !== "string") {
-//         res.status(422).end()
-//     } else {
-//         const result = await repository.findOne({code})
-//        if (result !== ) {
-//            repository.remove(Coupon)
-//        } 
-//     }
-// })
-app.get('/stores', function (req, res) {
-    return __awaiter(this, void 0, void 0, function () {
-        var repository;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    repository = typeorm_1.getRepository(store_1.Store);
-                    return [4 /*yield*/, repository.find().then(function (data) {
-                            res.status(200).json({
-                                data: data
-                            });
-                        })["catch"](function (err) {
-                            res.status(400).json({
-                                message: err
-                            });
-                        })];
-                case 1:
-                    _a.sent();
-                    return [2 /*return*/];
-            }
-        });
-    });
-}));
+app["delete"]('/coupons', coupon_controller_1.deleteCoupons);
 app.listen(3000);
 (function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, createconnection_1.dbCreateConnection()];
+            case 0: return [4 /*yield*/, createConnection_1.dbCreateConnection()];
             case 1:
                 _a.sent();
                 return [2 /*return*/];
