@@ -43,7 +43,7 @@ require("reflect-metadata");
 var express_1 = __importDefault(require("express"));
 require("reflect-metadata");
 var createconnection_1 = require("./typeorm/createconnection");
-var validation_schema_1 = __importDefault(require("./Joi/validation_schema"));
+var validation_schema_1 = require("./Joi/validation_schema");
 var randomDate_1 = __importDefault(require("./Rdate/randomDate"));
 var coupon_1 = require("./entity/coupon");
 var store_1 = require("./entity/store");
@@ -84,7 +84,7 @@ app.post('/coupons', function (req, res) {
                     repository = typeorm_1.getRepository(coupon_1.Coupon);
                     newCoupon = new coupon_1.Coupon;
                     code = req.query.code;
-                    return [4 /*yield*/, validation_schema_1["default"].validateAsync({ code: code })]; //preguntar como meter en el if
+                    return [4 /*yield*/, validation_schema_1.authSchema.validateAsync({ code: code })]; //preguntar como meter en el if
                 case 1:
                     validation = _a.sent() //preguntar como meter en el if
                     ;
@@ -104,13 +104,35 @@ app.post('/coupons', function (req, res) {
 });
 app.patch('/coupons', function (req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var repository;
+        var repository, newEmail, customer_email, emailValidate;
         return __generator(this, function (_a) {
-            repository = typeorm_1.getRepository(coupon_1.Coupon);
-            return [2 /*return*/];
+            switch (_a.label) {
+                case 0:
+                    repository = typeorm_1.getRepository(coupon_1.Coupon);
+                    newEmail = new coupon_1.Coupon;
+                    customer_email = req.query.customer_email;
+                    return [4 /*yield*/, validation_schema_1.authEmail.validateAsync({ customer_email: customer_email })];
+                case 1:
+                    emailValidate = _a.sent();
+                    if (!emailValidate) return [3 /*break*/, 4];
+                    if (!(typeof customer_email == "string")) return [3 /*break*/, 3];
+                    return [4 /*yield*/, repository.findOne({ customer_email: customer_email })];
+                case 2:
+                    if (_a.sent()) {
+                        res.status(422).send(422);
+                    }
+                    else {
+                    }
+                    _a.label = 3;
+                case 3: return [3 /*break*/, 5];
+                case 4:
+                    res.send({ message: 'error no valido' });
+                    _a.label = 5;
+                case 5: return [2 /*return*/];
+            }
         });
     });
-});
+}, 
 //DELETE
 // app.delete('/coupons', async function (req,res) {
 //     const repository = getRepository(Coupon);
@@ -146,7 +168,7 @@ app.get('/stores', function (req, res) {
             }
         });
     });
-});
+}));
 app.listen(3000);
 (function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {

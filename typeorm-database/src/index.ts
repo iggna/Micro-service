@@ -2,7 +2,7 @@ import "reflect-metadata";
 import express, { response } from "express";
 import "reflect-metadata";
 import { dbCreateConnection } from "./typeorm/createconnection";
-import authSchema from "./Joi/validation_schema";
+import {authSchema, authEmail} from "./Joi/validation_schema";
 import Rdate from "./Rdate/randomDate";
 import { Coupon } from "./entity/coupon";
 import { Store } from "./entity/store";
@@ -42,8 +42,24 @@ app.post('/coupons', async function (req, res) {
 
 app.patch('/coupons', async function (req, res) {
     const repository = getRepository(Coupon);
+    const newEmail = new Coupon
+    const { customer_email } = req.query;
+    const emailValidate = await authEmail.validateAsync({customer_email})
+    if (emailValidate) {
+        //validar que no haya generado otro cupon previamente
+
+        if (typeof customer_email == "string") {
+            if (await repository.findOne({customer_email})) {
+                res.status(422).send(422)
+            } else {
+                
+            }
+        }
+    } else {
+        res.send({message: 'email not valid'})
+    }
+},
     
-})
 
 
 //DELETE
@@ -62,7 +78,9 @@ app.patch('/coupons', async function (req, res) {
 // })
 
 
+//STORES
 
+//GET
 app.get('/stores', async function (req, res) {
     const repository = getRepository(Store);
     await repository.find().then((data) => {
@@ -74,7 +92,7 @@ app.get('/stores', async function (req, res) {
             message:err,
         });
     });
-});
+}));
 
 
 app.listen(3000);
