@@ -8,25 +8,25 @@ export class Coupon {
         nullable: true 
     })
 
-    assignedAt: Date;
+    assignedAt!: Date;
 
     @Column({
         width : 8,
         nullable: true
     })
-    code: string;
+    code!: string;
 
     @Column({
         nullable: true
     })
-    customer_email: string;
+    customer_email!: string;
 
     @PrimaryGeneratedColumn()
-    id: number;
+    id!: number;
 
     @Column({ 
         name: "expires_at",
         nullable: true
     })
-    expiresAt: Date;
+    expiresAt!: Date;
 }

@@ -5,12 +5,12 @@ import "reflect-metadata"
 export class Store {
 
     @PrimaryGeneratedColumn("uuid")
-    id: number;
+    id!: number;
 
     @Column()
-    name: string;
+    name!: string;
 
     @Column()
-    address: string;
+    address!: string;
 
 }
