@@ -45,6 +45,10 @@ var Coupon = /** @class */ (function () {
         }),
         __metadata("design:type", Date)
     ], Coupon.prototype, "expiresAt");
+    __decorate([
+        typeorm_1.DeleteDateColumn(),
+        __metadata("design:type", Date)
+    ], Coupon.prototype, "deleted_at");
     Coupon = __decorate([
         typeorm_1.Entity({ name: "coupons" })
     ], Coupon);
