@@ -142,23 +142,31 @@ var patchCoupons = function (req, res) {
 exports.patchCoupons = patchCoupons;
 var deleteCoupons = function (req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var repository, id, idResult, search;
+        var repository, id, idResult, err_3;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     repository = typeorm_1.getRepository(coupon_1.Coupon);
-                    id = req.body.id;
-                    return [4 /*yield*/, repository.findOne({ id: id })];
+                    id = req.query;
+                    _a.label = 1;
                 case 1:
-                    idResult = _a.sent();
-                    if (!idResult) return [3 /*break*/, 3];
-                    return [4 /*yield*/, repository.find({ where: { customer_email: null } })];
+                    _a.trys.push([1, 3, , 4]);
+                    return [4 /*yield*/, repository.findOneOrFail(id)];
                 case 2:
-                    search = _a.sent();
-                    repository.softDelete({ id: id });
-                    res.sendStatus(201);
-                    _a.label = 3;
-                case 3: return [2 /*return*/];
+                    idResult = _a.sent();
+                    if (idResult.customer_email === null) {
+                        repository["delete"](id);
+                        res.sendStatus(201);
+                    }
+                    else {
+                        res.status(404).send({ message: 'The coupon requested already has an email assigned' });
+                    }
+                    return [3 /*break*/, 4];
+                case 3:
+                    err_3 = _a.sent();
+                    res.status(404).send({ message: 'Coupon not found' });
+                    return [3 /*break*/, 4];
+                case 4: return [2 /*return*/];
             }
         });
     });
