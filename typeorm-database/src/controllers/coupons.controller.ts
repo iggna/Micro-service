@@ -9,31 +9,38 @@ export const getCoupons = async function (req: Request, res: Response) {
     const repository = getRepository(Coupon);
     const code :string = (req.query.code as string);
     const customer_email :string = (req.query.customer_email as string);
-    
-    const coupon = await repository.findOne({code});
+
+    //verficar que el codigo ingresado ya esta con deleted_at para reasignarlo o enviar error
+    try {
+        const coupon = await repository.findOneOrFail({code, customer_email});
         if (coupon !== undefined) {
-            if (coupon.customer_email === customer_email){
+            if (coupon.customer_email === customer_email && coupon.code === code){
                 res.sendStatus(200);
-            } else {
-                res.sendStatus(404);
             }
         }
+    } catch (err) {
+        res.status(404).send({message: 'email or coupon not found/ not matching'});  
+    }
 }
 
 export const postCoupons = async function (req: Request, res: Response) {
     const code :string = (req.query.code as string);
 
     try {
-        await authSchema.validateAsync({code})
+
+        const codeCheck = await authSchema.validate({code})
         
-        const newCoupon = new Coupon;
-        newCoupon.code = code
-        newCoupon.expiresAt = (Rdate);
-        const repository = getRepository(Coupon);
-        repository.save(newCoupon);
-        res.sendStatus(201);
+        //verificar si el codigo ya existe o si esta deleted_at
+        if (codeCheck) {
+            const newCoupon = new Coupon;
+            newCoupon.code = code
+            newCoupon.expiresAt = (Rdate);
+            const repository = getRepository(Coupon);
+            repository.save(newCoupon);
+            res.sendStatus(201);
+        }
     } catch(err) {
-        res.sendStatus(404).send({"error": err, "message": 'Something went wrong!'});
+        res.sendStatus(422);
     }
 }
 
@@ -44,6 +51,7 @@ export const patchCoupons = async function (req: Request, res: Response) {
 
     try {
         const emailCheck = await authEmail.validateAsync({customer_email})
+        //verificar que ese email no fue dado de baja
         if (emailCheck) {
             if (await repository.findOne({customer_email})) {
                 res.status(422).send({message: 'there is already a coupon asigned to that email'});
@@ -67,6 +75,7 @@ export const deleteCoupons = async function (req: Request, res: Response) {
     
     try {
         const idResult = await repository.findOneOrFail(id);
+        //verificar que id no fue dado de baja previamente
             if(idResult.customer_email === null) {
                 repository.softDelete(id);
                 idResult.deleted_at = date;

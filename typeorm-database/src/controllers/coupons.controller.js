@@ -46,25 +46,30 @@ var coupon_1 = require("../entity/coupon");
 var typeorm_1 = require("typeorm");
 var getCoupons = function (req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var repository, code, customer_email, coupon;
+        var repository, code, customer_email, coupon, err_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     repository = typeorm_1.getRepository(coupon_1.Coupon);
                     code = req.query.code;
                     customer_email = req.query.customer_email;
-                    return [4 /*yield*/, repository.findOne({ code: code })];
+                    _a.label = 1;
                 case 1:
+                    _a.trys.push([1, 3, , 4]);
+                    return [4 /*yield*/, repository.findOneOrFail({ code: code, customer_email: customer_email })];
+                case 2:
                     coupon = _a.sent();
                     if (coupon !== undefined) {
-                        if (coupon.customer_email === customer_email) {
+                        if (coupon.customer_email === customer_email && coupon.code === code) {
                             res.sendStatus(200);
                         }
-                        else {
-                            res.sendStatus(404);
-                        }
                     }
-                    return [2 /*return*/];
+                    return [3 /*break*/, 4];
+                case 3:
+                    err_1 = _a.sent();
+                    res.status(404).send({ message: 'email or coupon not found/ not matching' });
+                    return [3 /*break*/, 4];
+                case 4: return [2 /*return*/];
             }
         });
     });
@@ -72,7 +77,7 @@ var getCoupons = function (req, res) {
 exports.getCoupons = getCoupons;
 var postCoupons = function (req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var code, newCoupon, repository, err_1;
+        var code, newCoupon, repository, err_2;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -80,19 +85,21 @@ var postCoupons = function (req, res) {
                     _a.label = 1;
                 case 1:
                     _a.trys.push([1, 3, , 4]);
-                    return [4 /*yield*/, validation_schema_1.authSchema.validateAsync({ code: code })];
+                    return [4 /*yield*/, validation_schema_1.authSchema.validate({ code: code })];
                 case 2:
-                    _a.sent();
-                    newCoupon = new coupon_1.Coupon;
-                    newCoupon.code = code;
-                    newCoupon.expiresAt = (randomDate_1["default"]);
-                    repository = typeorm_1.getRepository(coupon_1.Coupon);
-                    repository.save(newCoupon);
-                    res.sendStatus(201);
+                    //verificar si el codigo ya existe o si esta deleted_at
+                    if (_a.sent()) {
+                        newCoupon = new coupon_1.Coupon;
+                        newCoupon.code = code;
+                        newCoupon.expiresAt = (randomDate_1["default"]);
+                        repository = typeorm_1.getRepository(coupon_1.Coupon);
+                        repository.save(newCoupon);
+                        res.sendStatus(201);
+                    }
                     return [3 /*break*/, 4];
                 case 3:
-                    err_1 = _a.sent();
-                    res.sendStatus(404).send({ "error": err_1, "message": 'Something went wrong!' });
+                    err_2 = _a.sent();
+                    res.sendStatus(422);
                     return [3 /*break*/, 4];
                 case 4: return [2 /*return*/];
             }
@@ -102,7 +109,7 @@ var postCoupons = function (req, res) {
 exports.postCoupons = postCoupons;
 var patchCoupons = function (req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var repository, customer_email, date, emailCheck, result, err_2;
+        var repository, customer_email, date, emailCheck, result, err_3;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -112,7 +119,9 @@ var patchCoupons = function (req, res) {
                     _a.label = 1;
                 case 1:
                     _a.trys.push([1, 7, , 8]);
-                    return [4 /*yield*/, validation_schema_1.authEmail.validateAsync({ customer_email: customer_email })];
+                    return [4 /*yield*/, validation_schema_1.authEmail.validateAsync({ customer_email: customer_email })
+                        //verificar que ese email no fue dado de baja
+                    ];
                 case 2:
                     emailCheck = _a.sent();
                     if (!emailCheck) return [3 /*break*/, 6];
@@ -131,7 +140,7 @@ var patchCoupons = function (req, res) {
                     _a.label = 6;
                 case 6: return [3 /*break*/, 8];
                 case 7:
-                    err_2 = _a.sent();
+                    err_3 = _a.sent();
                     res.sendStatus(422).send({ message: 'email not valid' });
                     return [3 /*break*/, 8];
                 case 8: return [2 /*return*/];
@@ -142,7 +151,7 @@ var patchCoupons = function (req, res) {
 exports.patchCoupons = patchCoupons;
 var deleteCoupons = function (req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var repository, date, id, idResult, err_3;
+        var repository, date, id, idResult, err_4;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -155,6 +164,7 @@ var deleteCoupons = function (req, res) {
                     return [4 /*yield*/, repository.findOneOrFail(id)];
                 case 2:
                     idResult = _a.sent();
+                    //verificar que id no fue dado de baja previamente
                     if (idResult.customer_email === null) {
                         repository.softDelete(id);
                         idResult.deleted_at = date;
@@ -165,7 +175,7 @@ var deleteCoupons = function (req, res) {
                     }
                     return [3 /*break*/, 4];
                 case 3:
-                    err_3 = _a.sent();
+                    err_4 = _a.sent();
                     res.status(404).send({ message: 'Coupon not found' });
                     return [3 /*break*/, 4];
                 case 4: return [2 /*return*/];
