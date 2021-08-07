@@ -1,4 +1,4 @@
-import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
+import {Entity, PrimaryGeneratedColumn, Column, DeleteDateColumn} from "typeorm";
 import "reflect-metadata"
 
 @Entity({ name: "stores" })
@@ -13,4 +13,8 @@ export class Store {
     @Column()
     address!: string;
 
+    @DeleteDateColumn({
+        nullable: true
+    })
+    deleted_at!: Date;
 }
