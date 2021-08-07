@@ -36,23 +36,125 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.getStores = void 0;
+exports.deleteStores = exports.postStores = exports.getStores = void 0;
 var store_1 = require("../entity/store");
 var typeorm_1 = require("typeorm");
+var validation_schema_1 = require("../Joi/validation_schema");
 var getStores = function (req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var repository, store;
+        var repository, page, name, result, data;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0:
-                    repository = typeorm_1.getRepository(store_1.Store);
-                    return [4 /*yield*/, typeorm_1.getRepository(store_1.Store)];
+                case 0: return [4 /*yield*/, typeorm_1.getRepository(store_1.Store)];
                 case 1:
-                    store = _a.sent();
-                    console.log(store);
+                    repository = _a.sent();
+                    page = Number(req.query.page);
+                    name = req.query.name;
+                    result = {
+                        where: {},
+                        take: 10,
+                        skip: 0
+                    };
+                    try {
+                        // const checkPage = await authPage.validateAsync({page})
+                        // const checkName = await authName.validateAsync({name})
+                        if (page) {
+                            result.skip = (page - 1) * result.take;
+                        }
+                        if (name) {
+                            result.where.name = typeorm_1.Like("%" + name + "%");
+                        }
+                    }
+                    catch (err) {
+                        res.sendStatus(404);
+                    }
+                    return [4 /*yield*/, repository.find(result)];
+                case 2:
+                    data = _a.sent();
+                    res.status(200).send(data);
                     return [2 /*return*/];
             }
         });
     });
 };
 exports.getStores = getStores;
+var postStores = function (req, res) {
+    return __awaiter(this, void 0, void 0, function () {
+        var name, address, repository, newStore, err_1;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    name = req.query.name;
+                    address = req.query.address;
+                    _a.label = 1;
+                case 1:
+                    _a.trys.push([1, 5, , 6]);
+                    return [4 /*yield*/, validation_schema_1.authName.validateAsync({ name: name })];
+                case 2:
+                    _a.sent();
+                    return [4 /*yield*/, validation_schema_1.authAddress.validateAsync({ address: address })
+                        //verificacion de que ambas son string y no se ingresan numbers
+                    ];
+                case 3:
+                    _a.sent();
+                    repository = typeorm_1.getRepository(store_1.Store);
+                    return [4 /*yield*/, repository.findOne({ name: name, address: address })];
+                case 4:
+                    if (_a.sent()) {
+                        res.status(422).send({ message: 'there is already a store with that name/ address' });
+                    }
+                    else {
+                        newStore = new store_1.Store;
+                        newStore.name = name;
+                        newStore.address = address;
+                        repository.save(newStore);
+                        res.sendStatus(201);
+                    }
+                    return [3 /*break*/, 6];
+                case 5:
+                    err_1 = _a.sent();
+                    res.sendStatus(404).send({ "error": err_1, "message": 'Something went wrong!' });
+                    return [3 /*break*/, 6];
+                case 6: return [2 /*return*/];
+            }
+        });
+    });
+};
+exports.postStores = postStores;
+var deleteStores = function (req, res) {
+    return __awaiter(this, void 0, void 0, function () {
+        var repository, date, id, idResult, err_2;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    repository = typeorm_1.getRepository(store_1.Store);
+                    date = new Date();
+                    id = req.query;
+                    _a.label = 1;
+                case 1:
+                    _a.trys.push([1, 4, , 5]);
+                    return [4 /*yield*/, validation_schema_1.authPage.validateAsync(id)];
+                case 2:
+                    _a.sent();
+                    return [4 /*yield*/, repository.findOneOrFail(id)];
+                case 3:
+                    idResult = _a.sent();
+                    if (idResult) {
+                        repository.softDelete(id);
+                        idResult.deleted_at = date;
+                        res.sendStatus(201);
+                    }
+                    else {
+                        res.status(404).send({ message: 'already deleted' });
+                    }
+                    return [3 /*break*/, 5];
+                case 4:
+                    err_2 = _a.sent();
+                    res.status(404).send({ message: 'The id requested was not found or has a character' });
+                    return [3 /*break*/, 5];
+                case 5: return [2 /*return*/];
+            }
+        });
+    });
+};
+exports.deleteStores = deleteStores;
