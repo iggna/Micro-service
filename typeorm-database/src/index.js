@@ -46,15 +46,13 @@ var coupons_controller_1 = require("./controllers/coupons.controller");
 var stores_controller_1 = require("./controllers/stores.controller");
 var app = express_1["default"]();
 app.use(express_1["default"].json());
-//GET
 app.get('/coupons', coupons_controller_1.getCoupons);
-//POST
 app.post('/coupons', coupons_controller_1.postCoupons);
-//PATCH
 app.patch('/coupons', coupons_controller_1.patchCoupons);
-//DELETE
 app["delete"]('/coupons', coupons_controller_1.deleteCoupons);
 app.get('/stores', stores_controller_1.getStores);
+app.post('/stores', stores_controller_1.postStores);
+app["delete"]('/stores', stores_controller_1.deleteStores);
 app.listen(3000);
 (function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
