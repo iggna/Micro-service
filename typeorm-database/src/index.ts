@@ -3,6 +3,7 @@ import express, { Response, Request } from "express";
 import { dbCreateConnection } from "./typeorm/createConnection";
 import { getCoupons, patchCoupons, postCoupons, deleteCoupons } from "./controllers/coupons.controller";
 import { deleteStores, getStores, postStores,  } from "./controllers/stores.controller";
+import {getStats} from "./controllers/stats.controller";
 
 const app = express()
 app.use(express.json());
@@ -22,7 +23,7 @@ app.post('/stores', postStores)
 
 app.delete('/stores', deleteStores)
 
-
+app.get('/getStats', getStats)
 
 
 app.listen(3000);

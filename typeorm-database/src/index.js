@@ -44,6 +44,7 @@ var express_1 = __importDefault(require("express"));
 var createConnection_1 = require("./typeorm/createConnection");
 var coupons_controller_1 = require("./controllers/coupons.controller");
 var stores_controller_1 = require("./controllers/stores.controller");
+var stats_controller_1 = require("./controllers/stats.controller");
 var app = express_1["default"]();
 app.use(express_1["default"].json());
 app.get('/coupons', coupons_controller_1.getCoupons);
@@ -53,6 +54,7 @@ app["delete"]('/coupons', coupons_controller_1.deleteCoupons);
 app.get('/stores', stores_controller_1.getStores);
 app.post('/stores', stores_controller_1.postStores);
 app["delete"]('/stores', stores_controller_1.deleteStores);
+app.get('/getStats', stats_controller_1.getStats);
 app.listen(3000);
 (function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
