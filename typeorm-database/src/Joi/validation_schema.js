@@ -6,7 +6,7 @@ exports.__esModule = true;
 exports.authAddress = exports.authName = exports.authPage = exports.authEmail = exports.authSchema = void 0;
 var joi_1 = __importDefault(require("joi"));
 exports.authSchema = joi_1["default"].object({
-    code: joi_1["default"].string().alphanum().equal(8)
+    code: joi_1["default"].string().alphanum().min(8).max(8).required()
 });
 exports.authEmail = joi_1["default"].object({
     customer_email: joi_1["default"].string().email().required()
@@ -15,9 +15,9 @@ exports.authPage = joi_1["default"].object({
     page: joi_1["default"].number().required()
 });
 exports.authName = joi_1["default"].object({
-    name: joi_1["default"].string().required()
+    name: joi_1["default"].string().required().alphanum()
 });
 exports.authAddress = joi_1["default"].object({
-    address: joi_1["default"].string().required()
+    address: joi_1["default"].string().required().alphanum()
 });
 //preguntar si se pueden hacer menos validaciones
