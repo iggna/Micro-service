@@ -25,15 +25,14 @@ export const getStores = async function (req: Request, res: Response) {
         }
 
         if (name) {
-        result.where.name = Like("%"+ name +"%")
+            result.where.name = Like("%"+ name +"%")
         }
 
     } catch(err) {
         res.sendStatus(404);
     }
-
-        const data = await repository.find(result);
-        res.status(200).send(data);
+        const data = await repository.findAndCount(result);
+        res.status(200).send({message: 'stores:', data});
 }
 
 
@@ -42,9 +41,8 @@ export const postStores = async function (req: Request, res: Response) {
     const address: string = (req.query.address as string);
     
     try {
-        await authName.validateAsync({name})
-        await authAddress.validateAsync({address})
-        //verificacion de que ambas son string y no se ingresan numbers
+        await authName.validateAsync({name});
+        await authAddress.validateAsync({address});
 
         const repository = getRepository(Store);
 

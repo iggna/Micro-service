@@ -68,10 +68,10 @@ var getStores = function (req, res) {
                     catch (err) {
                         res.sendStatus(404);
                     }
-                    return [4 /*yield*/, repository.find(result)];
+                    return [4 /*yield*/, repository.findAndCount(result)];
                 case 2:
                     data = _a.sent();
-                    res.status(200).send(data);
+                    res.status(200).send({ message: 'stores:', data: data });
                     return [2 /*return*/];
             }
         });
@@ -92,9 +92,7 @@ var postStores = function (req, res) {
                     return [4 /*yield*/, validation_schema_1.authName.validateAsync({ name: name })];
                 case 2:
                     _a.sent();
-                    return [4 /*yield*/, validation_schema_1.authAddress.validateAsync({ address: address })
-                        //verificacion de que ambas son string y no se ingresan numbers
-                    ];
+                    return [4 /*yield*/, validation_schema_1.authAddress.validateAsync({ address: address })];
                 case 3:
                     _a.sent();
                     repository = typeorm_1.getRepository(store_1.Store);
