@@ -59,10 +59,13 @@ var getCoupons = function (req, res) {
                     return [4 /*yield*/, repository.findOneOrFail({ code: code, customer_email: customer_email })];
                 case 2:
                     coupon = _a.sent();
-                    if (coupon !== undefined) {
+                    if (coupon !== undefined && coupon.deleted_at == undefined) {
                         if (coupon.customer_email === customer_email && coupon.code === code) {
                             res.sendStatus(200);
                         }
+                    }
+                    else {
+                        res.status(404).send({ message: 'this coupon is already deleted' });
                     }
                     return [3 /*break*/, 4];
                 case 3:
@@ -77,31 +80,38 @@ var getCoupons = function (req, res) {
 exports.getCoupons = getCoupons;
 var postCoupons = function (req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var code, newCoupon, repository, err_2;
+        var code, repository, coupon, codeCheck, newCoupon, err_2;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     code = req.query.code;
+                    repository = typeorm_1.getRepository(coupon_1.Coupon);
                     _a.label = 1;
                 case 1:
-                    _a.trys.push([1, 3, , 4]);
-                    return [4 /*yield*/, validation_schema_1.authSchema.validate({ code: code })];
+                    _a.trys.push([1, 6, , 7]);
+                    return [4 /*yield*/, repository.findOneOrFail({ code: code })];
                 case 2:
-                    //verificar si el codigo ya existe o si esta deleted_at
-                    if (_a.sent()) {
-                        newCoupon = new coupon_1.Coupon;
+                    coupon = _a.sent();
+                    if (!(code === coupon.code)) return [3 /*break*/, 3];
+                    res.status(422).send('there is already a coupon created with that code');
+                    return [3 /*break*/, 5];
+                case 3: return [4 /*yield*/, validation_schema_1.authSchema.validateAsync({ code: code })];
+                case 4:
+                    codeCheck = _a.sent();
+                    if (codeCheck) {
+                        newCoupon = new coupon_1.Coupon();
                         newCoupon.code = code;
                         newCoupon.expiresAt = (randomDate_1["default"]);
-                        repository = typeorm_1.getRepository(coupon_1.Coupon);
                         repository.save(newCoupon);
                         res.sendStatus(201);
                     }
-                    return [3 /*break*/, 4];
-                case 3:
+                    _a.label = 5;
+                case 5: return [3 /*break*/, 7];
+                case 6:
                     err_2 = _a.sent();
                     res.sendStatus(422);
-                    return [3 /*break*/, 4];
-                case 4: return [2 /*return*/];
+                    return [3 /*break*/, 7];
+                case 7: return [2 /*return*/];
             }
         });
     });
@@ -116,15 +126,15 @@ var patchCoupons = function (req, res) {
                     repository = typeorm_1.getRepository(coupon_1.Coupon);
                     customer_email = req.query.customer_email;
                     date = new Date();
-                    _a.label = 1;
-                case 1:
-                    _a.trys.push([1, 7, , 8]);
                     return [4 /*yield*/, validation_schema_1.authEmail.validateAsync({ customer_email: customer_email })
                         //verificar que ese email no fue dado de baja
                     ];
-                case 2:
+                case 1:
                     emailCheck = _a.sent();
-                    if (!emailCheck) return [3 /*break*/, 6];
+                    _a.label = 2;
+                case 2:
+                    _a.trys.push([2, 7, , 8]);
+                    if (!(emailCheck && emailCheck.deleted_at === null)) return [3 /*break*/, 6];
                     return [4 /*yield*/, repository.findOne({ customer_email: customer_email })];
                 case 3:
                     if (!_a.sent()) return [3 /*break*/, 4];
@@ -141,7 +151,7 @@ var patchCoupons = function (req, res) {
                 case 6: return [3 /*break*/, 8];
                 case 7:
                     err_3 = _a.sent();
-                    res.sendStatus(422).send({ message: 'email not valid' });
+                    res.sendStatus(422).send({ message: 'email not valid or deleted' });
                     return [3 /*break*/, 8];
                 case 8: return [2 /*return*/];
             }
