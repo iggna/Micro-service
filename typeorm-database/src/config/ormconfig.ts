@@ -1,6 +1,7 @@
 import { ConnectionOptions } from "typeorm";
 require('dotenv').config();
 
+
 const config : ConnectionOptions = {
     type: "postgres",
     host: process.env.TYPEORM_HOST,
@@ -10,7 +11,7 @@ const config : ConnectionOptions = {
     database: process.env.TYPEORM_DATABASE,
     entities: ['**/src/entity/*.js'],
     schema: "rooftop-backend-challenge",
-    synchronize: Boolean(false), //variable de entorno sacada, preguntar a pablo a ver q onda como utilizar variable entorno
+    synchronize: Boolean(false),
     logging: Boolean(process.env.TYPEORM_LOGGING),
 };
 
