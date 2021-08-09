@@ -42,7 +42,7 @@ var typeorm_1 = require("typeorm");
 var validation_schema_1 = require("../Joi/validation_schema");
 var getStores = function (req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var repository, page, name, result, data;
+        var repository, page, name, result, data, err_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, typeorm_1.getRepository(store_1.Store)];
@@ -55,24 +55,27 @@ var getStores = function (req, res) {
                         take: 10,
                         skip: 0
                     };
-                    try {
-                        // const checkPage = await authPage.validateAsync({page})
-                        // const checkName = await authName.validateAsync({name})
-                        if (page) {
-                            result.skip = (page - 1) * result.take;
-                        }
-                        if (name) {
-                            result.where.name = typeorm_1.Like("%" + name + "%");
-                        }
+                    _a.label = 2;
+                case 2:
+                    _a.trys.push([2, 5, , 6]);
+                    return [4 /*yield*/, validation_schema_1.authPage.validateAsync({ page: page })];
+                case 3:
+                    _a.sent();
+                    if (page) {
+                        result.skip = (page - 1) * result.take;
                     }
-                    catch (err) {
-                        res.sendStatus(404);
+                    if (name) {
+                        result.where.name = typeorm_1.Like("%" + name + "%");
                     }
                     return [4 /*yield*/, repository.findAndCount(result)];
-                case 2:
+                case 4:
                     data = _a.sent();
-                    res.status(200).send({ message: 'stores:', data: data });
-                    return [2 /*return*/];
+                    return [2 /*return*/, res.status(200).send(data)];
+                case 5:
+                    err_1 = _a.sent();
+                    res.sendStatus(404).send({ message: err_1 });
+                    return [3 /*break*/, 6];
+                case 6: return [2 /*return*/];
             }
         });
     });
@@ -80,7 +83,7 @@ var getStores = function (req, res) {
 exports.getStores = getStores;
 var postStores = function (req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var name, address, repository, newStore, err_1;
+        var name, address, repository, newStore, err_2;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -88,32 +91,32 @@ var postStores = function (req, res) {
                     address = req.query.address;
                     _a.label = 1;
                 case 1:
-                    _a.trys.push([1, 5, , 6]);
-                    return [4 /*yield*/, validation_schema_1.authName.validateAsync({ name: name })];
+                    _a.trys.push([1, 8, , 9]);
+                    return [4 /*yield*/, validation_schema_1.auth.validateAsync({ name: name, address: address })];
                 case 2:
                     _a.sent();
-                    return [4 /*yield*/, validation_schema_1.authAddress.validateAsync({ address: address })];
+                    return [4 /*yield*/, typeorm_1.getRepository(store_1.Store)];
                 case 3:
-                    _a.sent();
-                    repository = typeorm_1.getRepository(store_1.Store);
+                    repository = _a.sent();
                     return [4 /*yield*/, repository.findOne({ name: name, address: address })];
                 case 4:
-                    if (_a.sent()) {
-                        res.status(422).send({ message: 'there is already a store with that name/ address' });
-                    }
-                    else {
-                        newStore = new store_1.Store;
-                        newStore.name = name;
-                        newStore.address = address;
-                        repository.save(newStore);
-                        res.sendStatus(201);
-                    }
-                    return [3 /*break*/, 6];
+                    if (!_a.sent()) return [3 /*break*/, 5];
+                    return [2 /*return*/, res.status(422).send({ message: 'there is already a store with that name/ address' })];
                 case 5:
-                    err_1 = _a.sent();
-                    res.sendStatus(404).send({ "error": err_1, "message": 'Something went wrong!' });
-                    return [3 /*break*/, 6];
-                case 6: return [2 /*return*/];
+                    newStore = new store_1.Store;
+                    newStore.name = name;
+                    newStore.address = address;
+                    return [4 /*yield*/, repository.save(newStore)];
+                case 6:
+                    _a.sent();
+                    res.sendStatus(201);
+                    _a.label = 7;
+                case 7: return [3 /*break*/, 9];
+                case 8:
+                    err_2 = _a.sent();
+                    res.sendStatus(404).send({ message: err_2 });
+                    return [3 /*break*/, 9];
+                case 9: return [2 /*return*/];
             }
         });
     });
@@ -121,36 +124,38 @@ var postStores = function (req, res) {
 exports.postStores = postStores;
 var deleteStores = function (req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var repository, date, id, idResult, err_2;
+        var repository, date, id, idResult, err_3;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     repository = typeorm_1.getRepository(store_1.Store);
                     date = new Date();
-                    id = req.query;
+                    id = Number(req.query.id);
                     _a.label = 1;
                 case 1:
-                    _a.trys.push([1, 4, , 5]);
-                    return [4 /*yield*/, validation_schema_1.authPage.validateAsync(id)];
+                    _a.trys.push([1, 7, , 8]);
+                    return [4 /*yield*/, validation_schema_1.authId.validateAsync({ id: id })];
                 case 2:
                     _a.sent();
-                    return [4 /*yield*/, repository.findOneOrFail(id)];
+                    return [4 /*yield*/, repository.findOneOrFail({ id: id })];
                 case 3:
                     idResult = _a.sent();
-                    if (idResult) {
-                        repository.softDelete(id);
-                        idResult.deleted_at = date;
-                        res.sendStatus(201);
-                    }
-                    else {
-                        res.status(404).send({ message: 'already deleted' });
-                    }
-                    return [3 /*break*/, 5];
+                    if (!(idResult && idResult.deleted_at === null)) return [3 /*break*/, 5];
+                    return [4 /*yield*/, repository.softDelete(id)];
                 case 4:
-                    err_2 = _a.sent();
-                    res.status(404).send({ message: 'The id requested was not found or has a character' });
-                    return [3 /*break*/, 5];
-                case 5: return [2 /*return*/];
+                    _a.sent();
+                    idResult.deleted_at = date;
+                    res.sendStatus(201);
+                    return [3 /*break*/, 6];
+                case 5:
+                    res.status(404).send({ message: 'already deleted' });
+                    _a.label = 6;
+                case 6: return [3 /*break*/, 8];
+                case 7:
+                    err_3 = _a.sent();
+                    res.status(404).send({ message: 'there was an error, please try again', err: err_3 });
+                    return [3 /*break*/, 8];
+                case 8: return [2 /*return*/];
             }
         });
     });
