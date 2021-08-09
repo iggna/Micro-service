@@ -9,15 +9,15 @@ export const authEmail = Joi.object({
 })
 
 export const authPage = Joi.object({
-    page: Joi.number().required()
+    page: Joi.number()
 })
 
-export const authName = Joi.object({
-    name: Joi.string().required().alphanum()
+export const authId = Joi.object({
+    id: Joi.number().required()
 })
 
-export const authAddress = Joi.object({
-    address: Joi.string().required().alphanum()
+export const auth = Joi.object({
+    name: Joi.string().required(),
+    address: Joi.string().required()
 })
 
-//preguntar si se pueden hacer menos validaciones
