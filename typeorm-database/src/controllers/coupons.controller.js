@@ -80,38 +80,40 @@ var getCoupons = function (req, res) {
 exports.getCoupons = getCoupons;
 var postCoupons = function (req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var code, repository, coupon, codeCheck, newCoupon, err_2;
+        var code, repository, coupon, newCoupon, err_2;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     code = req.query.code;
-                    repository = typeorm_1.getRepository(coupon_1.Coupon);
                     _a.label = 1;
                 case 1:
-                    _a.trys.push([1, 6, , 7]);
-                    return [4 /*yield*/, repository.findOneOrFail({ code: code })];
+                    _a.trys.push([1, 8, , 9]);
+                    return [4 /*yield*/, validation_schema_1.authSchema.validateAsync({ code: code })];
                 case 2:
-                    coupon = _a.sent();
-                    if (!(code === coupon.code)) return [3 /*break*/, 3];
-                    res.status(422).send('there is already a coupon created with that code');
-                    return [3 /*break*/, 5];
-                case 3: return [4 /*yield*/, validation_schema_1.authSchema.validateAsync({ code: code })];
+                    _a.sent();
+                    return [4 /*yield*/, typeorm_1.getRepository(coupon_1.Coupon)];
+                case 3:
+                    repository = _a.sent();
+                    return [4 /*yield*/, repository.findOne({ code: code })];
                 case 4:
-                    codeCheck = _a.sent();
-                    if (codeCheck) {
-                        newCoupon = new coupon_1.Coupon();
-                        newCoupon.code = code;
-                        newCoupon.expiresAt = (randomDate_1["default"]);
-                        repository.save(newCoupon);
-                        res.sendStatus(201);
-                    }
-                    _a.label = 5;
-                case 5: return [3 /*break*/, 7];
+                    coupon = _a.sent();
+                    if (!(coupon !== undefined && code === coupon.code)) return [3 /*break*/, 5];
+                    return [2 /*return*/, res.status(422).json({ message: 'there is already a coupon created with that code' })];
+                case 5:
+                    newCoupon = new coupon_1.Coupon();
+                    newCoupon.code = code;
+                    newCoupon.expiresAt = (randomDate_1["default"]);
+                    return [4 /*yield*/, repository.save(newCoupon)];
                 case 6:
+                    _a.sent();
+                    res.sendStatus(201);
+                    _a.label = 7;
+                case 7: return [3 /*break*/, 9];
+                case 8:
                     err_2 = _a.sent();
-                    res.sendStatus(422);
-                    return [3 /*break*/, 7];
-                case 7: return [2 /*return*/];
+                    res.sendStatus(422).send({ message: err_2 });
+                    return [3 /*break*/, 9];
+                case 9: return [2 /*return*/];
             }
         });
     });
@@ -119,27 +121,24 @@ var postCoupons = function (req, res) {
 exports.postCoupons = postCoupons;
 var patchCoupons = function (req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var repository, customer_email, date, emailCheck, result, err_3;
+        var repository, customer_email, date, email, result, err_3;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     repository = typeorm_1.getRepository(coupon_1.Coupon);
                     customer_email = req.query.customer_email;
                     date = new Date();
-                    return [4 /*yield*/, validation_schema_1.authEmail.validateAsync({ customer_email: customer_email })
-                        //verificar que ese email no fue dado de baja
-                    ];
+                    _a.label = 1;
                 case 1:
-                    emailCheck = _a.sent();
-                    _a.label = 2;
+                    _a.trys.push([1, 7, , 8]);
+                    return [4 /*yield*/, validation_schema_1.authEmail.validateAsync({ customer_email: customer_email })];
                 case 2:
-                    _a.trys.push([2, 7, , 8]);
-                    if (!(emailCheck && emailCheck.deleted_at === null)) return [3 /*break*/, 6];
+                    _a.sent();
                     return [4 /*yield*/, repository.findOne({ customer_email: customer_email })];
                 case 3:
-                    if (!_a.sent()) return [3 /*break*/, 4];
-                    res.status(422).send({ message: 'there is already a coupon asigned to that email' });
-                    return [3 /*break*/, 6];
+                    email = _a.sent();
+                    if (!(email && email.code !== null)) return [3 /*break*/, 4];
+                    return [2 /*return*/, res.status(422).send({ message: 'there is already a coupon asigned to that email' })];
                 case 4: return [4 /*yield*/, repository.findOneOrFail({ where: { customer_email: null } })];
                 case 5:
                     result = _a.sent();
@@ -151,7 +150,7 @@ var patchCoupons = function (req, res) {
                 case 6: return [3 /*break*/, 8];
                 case 7:
                     err_3 = _a.sent();
-                    res.sendStatus(422).send({ message: 'email not valid or deleted' });
+                    res.sendStatus(422).send({ message: err_3 });
                     return [3 /*break*/, 8];
                 case 8: return [2 /*return*/];
             }
@@ -167,28 +166,29 @@ var deleteCoupons = function (req, res) {
                 case 0:
                     repository = typeorm_1.getRepository(coupon_1.Coupon);
                     date = new Date();
-                    id = req.query;
+                    id = Number(req.query.id);
                     _a.label = 1;
                 case 1:
-                    _a.trys.push([1, 3, , 4]);
-                    return [4 /*yield*/, repository.findOneOrFail(id)];
+                    _a.trys.push([1, 6, , 7]);
+                    return [4 /*yield*/, repository.findOneOrFail({ id: id })];
                 case 2:
                     idResult = _a.sent();
-                    //verificar que id no fue dado de baja previamente
-                    if (idResult.customer_email === null) {
-                        repository.softDelete(id);
-                        idResult.deleted_at = date;
-                        res.sendStatus(201);
-                    }
-                    else {
-                        res.status(404).send({ message: 'The coupon requested already has an email assigned' });
-                    }
-                    return [3 /*break*/, 4];
+                    if (!(idResult.customer_email === null && idResult.deleted_at == null)) return [3 /*break*/, 4];
+                    return [4 /*yield*/, repository.softDelete(id)];
                 case 3:
+                    _a.sent();
+                    idResult.deleted_at = date;
+                    res.sendStatus(201);
+                    return [3 /*break*/, 5];
+                case 4:
+                    res.status(404).send({ message: 'The coupon requested has an email assigned already' });
+                    _a.label = 5;
+                case 5: return [3 /*break*/, 7];
+                case 6:
                     err_4 = _a.sent();
-                    res.status(404).send({ message: 'Coupon not found' });
-                    return [3 /*break*/, 4];
-                case 4: return [2 /*return*/];
+                    res.status(404).send({ message: 'there was an error, please try again', err: err_4 });
+                    return [3 /*break*/, 7];
+                case 7: return [2 /*return*/];
             }
         });
     });
