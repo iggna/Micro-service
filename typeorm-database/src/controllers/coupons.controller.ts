@@ -29,8 +29,8 @@ export const getCoupons = async function (req: Request, res: Response) {
 export const postCoupons = async function (req: Request, res: Response) {
     const code :string = (req.query.code as string);
     
-
     try {
+        
         await authSchema.validateAsync({code});
         const repository = await getRepository(Coupon);
 
@@ -56,8 +56,8 @@ export const patchCoupons = async function (req: Request, res: Response) {
 
     try {
 
-    await authEmail.validateAsync({customer_email})
-    const email = await repository.findOne({customer_email})
+    await authEmail.validateAsync({customer_email});
+    const email = await repository.findOne({customer_email});
 
         if (email && email!.code !== null) {
             return res.status(422).send({message: 'there is already a coupon asigned to that email'});  
@@ -80,14 +80,15 @@ export const deleteCoupons = async function (req: Request, res: Response) {
     
     try {
         const idResult = await repository.findOneOrFail({id});
+
             if(idResult.customer_email === null && idResult.deleted_at == null) {
                 await repository.softDelete(id);
-                idResult.deleted_at = date;
+                idResult.deleted_at = date
                 res.sendStatus(201);
             } else {
-                res.status(404).send({message: 'The coupon requested has an email assigned already'})
+                res.status(404).send({message: 'The coupon requested has an email assigned already'});
             }  
     } catch (err) {
-        res.status(404).send({message: 'there was an error, please try again', err})
+        res.status(404).send({message: 'there was an error, please try again', err});
     }   
 }

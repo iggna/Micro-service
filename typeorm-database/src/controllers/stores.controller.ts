@@ -17,14 +17,12 @@ export const getStores = async function (req: Request, res: Response) {
     } as any
 
     try{    
-        
         await authPage.validateAsync({page});
 
         if (page) {
             result.skip = (page - 1) * result.take
         }
         
-
         if (name) {
             result.where.name = Like("%"+ name +"%");
         }
@@ -49,15 +47,15 @@ export const postStores = async function (req: Request, res: Response) {
         if (await repository.findOne({name, address})) {
            return res.status(422).send({message: 'there is already a store with that name/ address'});
         } else {
-            const newStore = new Store;
-            newStore.name = name;
-            newStore.address = address;
+            const newStore = new Store
+            newStore.name = name
+            newStore.address = address
             await repository.save(newStore);
             res.sendStatus(201);
         }
         
     } catch (err) {
-        res.sendStatus(404).send({message: err})
+        res.sendStatus(404).send({message: err});
     }
 }
 
@@ -72,12 +70,12 @@ export const deleteStores = async function (req: Request, res: Response) {
         const idResult = await repository.findOneOrFail({id});
             if (idResult && idResult.deleted_at === null) {
                 await repository.softDelete(id);
-                idResult.deleted_at = date;
+                idResult.deleted_at = date
                 res.sendStatus(201);
             } else {
                 res.status(404).send({message: 'already deleted'});
             }
     } catch (err) {
-        res.status(404).send({message: 'there was an error, please try again', err})
+        res.status(404).send({message: 'there was an error, please try again', err});
     }
 }
