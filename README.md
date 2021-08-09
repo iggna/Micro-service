@@ -27,11 +27,17 @@ npm install
 
 Set the environment variables:
 ```bash
-cp .env.example .env
+.env.example .env
 # open .env and modify the environment variables
 ```
 
 ### Commands
+
+Compile:
+
+```bash
+npm run start
+```
 
 Running locally:
 
