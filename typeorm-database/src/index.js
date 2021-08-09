@@ -42,20 +42,15 @@ exports.__esModule = true;
 require("reflect-metadata");
 var express_1 = __importDefault(require("express"));
 var createConnection_1 = require("./typeorm/createConnection");
-var coupons_controller_1 = require("./controllers/coupons.controller");
-var stores_controller_1 = require("./controllers/stores.controller");
-var stats_controller_1 = require("./controllers/stats.controller");
+var routesCoupons_1 = __importDefault(require("./routes/routesCoupons"));
+var routesStores_1 = __importDefault(require("./routes/routesStores"));
+var routesStats_1 = __importDefault(require("./routes/routesStats"));
+require("dotenv/config");
+require('dotenv').config();
 var app = express_1["default"]();
 app.use(express_1["default"].json());
-app.get('/coupons', coupons_controller_1.getCoupons);
-app.post('/coupons', coupons_controller_1.postCoupons);
-app.patch('/coupons', coupons_controller_1.patchCoupons);
-app["delete"]('/coupons', coupons_controller_1.deleteCoupons);
-app.get('/stores', stores_controller_1.getStores);
-app.post('/stores', stores_controller_1.postStores);
-app["delete"]('/stores', stores_controller_1.deleteStores);
-app.get('/getStats', stats_controller_1.getStats);
-app.listen(3000);
+app.use(routesCoupons_1["default"], routesStores_1["default"], routesStats_1["default"]);
+app.listen(process.env.PORT);
 (function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {

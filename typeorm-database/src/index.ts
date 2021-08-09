@@ -1,32 +1,27 @@
 import "reflect-metadata";
-import express, { Response, Request } from "express";
+import express from "express";
 import { dbCreateConnection } from "./typeorm/createConnection";
-import { getCoupons, patchCoupons, postCoupons, deleteCoupons } from "./controllers/coupons.controller";
-import { deleteStores, getStores, postStores,  } from "./controllers/stores.controller";
-import {getStats} from "./controllers/stats.controller";
+import routesCoupons from "./routes/routesCoupons"
+import routesStores from "./routes/routesStores"
+import routesStats from "./routes/routesStats"
 
-const app = express()
+
+import "dotenv/config";
+
+require('dotenv').config()
+
+const app = express();
 app.use(express.json());
 
 
-app.get('/coupons', getCoupons)
-
-app.post('/coupons', postCoupons)
-
-app.patch('/coupons', patchCoupons) 
-
-app.delete('/coupons', deleteCoupons)
-
-app.get('/stores', getStores)
-
-app.post('/stores', postStores)
-
-app.delete('/stores', deleteStores)
-
-app.get('/getStats', getStats)
+app.use(
+    routesCoupons, 
+    routesStores, 
+    routesStats
+    );
 
 
-app.listen(3000);
+app.listen(process.env.PORT);
 
 (async () => {   
     await dbCreateConnection(); 
