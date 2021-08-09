@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "tsc typeorm-database/src/index.ts --experimentalDecorators --emitDecoratorMetadata --esModuleInterop",
-    "dev": "nodemon src/app.ts",
+    "dev": "nodemon typeorm-database/src/index.ts",
     "build": "tsc -p ."
   },
   "keywords": [],
