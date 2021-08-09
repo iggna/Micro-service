@@ -23,6 +23,13 @@ var Coupon = /** @class */ (function () {
     ], Coupon.prototype, "assignedAt");
     __decorate([
         typeorm_1.Column({
+            name: "created_at",
+            nullable: true
+        }),
+        __metadata("design:type", Date)
+    ], Coupon.prototype, "createdAt");
+    __decorate([
+        typeorm_1.Column({
             width: 8,
             nullable: true
         }),
@@ -46,7 +53,9 @@ var Coupon = /** @class */ (function () {
         __metadata("design:type", Date)
     ], Coupon.prototype, "expiresAt");
     __decorate([
-        typeorm_1.DeleteDateColumn(),
+        typeorm_1.DeleteDateColumn({
+            nullable: true
+        }),
         __metadata("design:type", Date)
     ], Coupon.prototype, "deleted_at");
     Coupon = __decorate([

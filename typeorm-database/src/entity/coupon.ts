@@ -7,8 +7,13 @@ export class Coupon {
         name: "assigned_at", 
         nullable: true 
     })
-
     assignedAt!: Date;
+
+    @Column({ 
+        name: "created_at", 
+        nullable: true 
+    })
+    createdAt!: Date;
 
     @Column({
         width : 8,
